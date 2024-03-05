@@ -47,7 +47,6 @@ case class CalenderDayDiv(
               draggable := true,
               onMouseDown --> { (e) =>
                   {
-                      // e.preventDefault()
                       e.ctrlKey match {
                           case true => {
                               dom.document
@@ -75,6 +74,36 @@ case class CalenderDayDiv(
                               // println(client.copiedContent.now())
                           }
                           case false =>
+                              e.altKey match {
+                                  case true =>
+                                      dom.document
+                                          .getElementsByTagName("td")
+                                          .toList
+                                          .map(
+                                            _.classList.remove("copied-cell")
+                                          )
+                                      e.target
+                                          .asInstanceOf[HTMLTableCellElement]
+                                          .classList
+                                          .add("copied-cell")
+                                      client.copiedContent.update(content =>
+                                          Some(
+                                            Shift(
+                                              e.target
+                                                  .asInstanceOf[
+                                                    HTMLTableCellElement
+                                                  ]
+                                                  .innerText
+                                            )
+                                          )
+                                      )
+                                      println(
+                                        "continuous copying " + e.target
+                                            .asInstanceOf[HTMLTableCellElement]
+                                            .innerText + " from day " + day.number
+                                      )
+                                  case false =>
+                              }
                       }
 
                   }
@@ -86,7 +115,6 @@ case class CalenderDayDiv(
                             .asInstanceOf[HTMLTableCellElement]
                             .innerText + " to day " + day.number
                       )
-                      // e.target.asInstanceOf[HTMLTableCellElement]
                   }
               }
             )
@@ -95,17 +123,68 @@ case class CalenderDayDiv(
 
     def render() = {
         td(
+          verticalAlign := "top",
           onMouseDown --> { (e) => e.preventDefault() },
           div(
             display := "flex",
             flexDirection := "column",
-            textAlign := "left",
-            height := "150px",
+            minHeight := "150px",
             tabIndex := 0,
             onClick --> (e => e.target.asInstanceOf[HTMLElement].focus()),
             onDblClick --> (e => println("Cannot edit this field.")),
             onMouseEnter --> (e => showAddButton.update(bool => true)),
             onMouseLeave --> (e => showAddButton.update(bool => false)),
+            onMouseEnter --> { (e) =>
+                {
+                    e.altKey match {
+                        case true => {
+                            client.copiedContent.signal
+                                .now() match {
+                                case Some(value) => {
+                                    println(
+                                      "pasting " + value + " to day " + day.number
+                                    )
+
+                                    client.dataModelVar.update(weeks => {
+                                        weeks
+                                            .map(week =>
+                                                week.copy(
+                                                  days =
+                                                      week.days.map(weekday => {
+                                                          if (
+                                                            weekday.number == day.number
+                                                          ) {
+                                                              val updatedShifts = if (
+                                                                !weekday.shifts
+                                                                    .contains(
+                                                                      value
+                                                                    )
+                                                              ) {
+                                                                  value :: weekday.shifts
+                                                              } else {
+                                                                  weekday.shifts
+                                                              }
+                                                              weekday
+                                                                  .copy(shifts =
+                                                                      updatedShifts
+                                                                  )
+                                                          } else {
+                                                              weekday
+                                                          }
+                                                      })
+                                                )
+                                            )
+                                    })
+                                }
+                                case None => println("no shift to paste")
+                            }
+                        }
+                        case false =>
+
+                    }
+
+                }
+            },
             onMouseUp --> { (e) =>
                 {
                     client.copiedContent.signal
@@ -123,8 +202,17 @@ case class CalenderDayDiv(
                                               if (
                                                 weekday.number == day.number
                                               ) {
+                                                  val updatedShifts =
+                                                      if (
+                                                        !weekday.shifts
+                                                            .contains(value)
+                                                      ) {
+                                                          value :: weekday.shifts
+                                                      } else {
+                                                          weekday.shifts
+                                                      }
                                                   weekday.copy(shifts =
-                                                      value :: weekday.shifts
+                                                      updatedShifts
                                                   )
                                               } else {
                                                   weekday
@@ -133,48 +221,6 @@ case class CalenderDayDiv(
                                         )
                                     )
                             })
-                            //     shifts.map(week => {
-                            //         true match {
-                            //             case true
-                            //                 if week.sunday.day
-                            //                     .equals(day.day) =>
-                            //                 week.sunday.shifts.::(value)
-                            //                 week
-                            //             case true
-                            //                 if week.monday.day
-                            //                     .equals(day.day) =>
-                            //                 week.sunday.shifts.::(value)
-                            //                 week
-                            //             case true
-                            //                 if week.tuesday.day
-                            //                     .equals(day.day) =>
-                            //                 week.sunday.shifts.::(value)
-                            //                 week
-                            //             case true
-                            //                 if week.wednesday.day
-                            //                     .equals(day.day) =>
-                            //                 week.sunday.shifts.::(value)
-                            //                 week
-                            //             case true
-                            //                 if week.thursday.day
-                            //                     .equals(day.day) =>
-                            //                 week.sunday.shifts.::(value)
-                            //                 week
-                            //             case true
-                            //                 if week.friday.day
-                            //                     .equals(day.day) =>
-                            //                 week.sunday.shifts.::(value)
-                            //                 week
-                            //             case true
-                            //                 if week.saturday.day
-                            //                     .equals(day.day) =>
-                            //                 week.sunday.shifts.::(value)
-                            //                 println(week.sunday.shifts)
-                            //                 week
-                            //             case _ => week
-                            //         }
-                            //     })
-                            // })
 
                             client.copiedContent.update(shift => None)
                             dom.document
@@ -187,29 +233,18 @@ case class CalenderDayDiv(
 
                 }
             },
-            // onMouseMove --> { (e) =>
-            //     {
-            //         println(client.copiedContent.signal.now())
-            //     }
-
-            // },
             td(
               display := "flex",
+              top := "0",
               justifyContent := "space-between",
               day.number,
               child <-- renderAddButton(showAddButton.signal)
             ),
             children <-- client.dataModelVar.signal.map(data => {
-                // data.flatMap(week => week.getDayByNumber(day.number))
                 renderShifts(
                   data.flatMap(week => week.getDayByNumber(day.number)).head
                 )
-                // data.find(week => week.days.exists(day))
-                //     .map(week => {
-                //         renderShifts()
-                //     })
             })
-            // renderShifts()
           )
         )
     }
