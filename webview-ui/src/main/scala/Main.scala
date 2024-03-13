@@ -28,7 +28,8 @@ def Main(): Unit = {
           width := "100%",
           Toolbar[Week](tableConfig).render(),
           Table[Week](tableConfig).render()
-        )
+        ),
+        tableConfig.client.modal.render(tableConfig.client)
       )
     )
 }

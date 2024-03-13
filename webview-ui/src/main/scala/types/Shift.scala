@@ -10,10 +10,10 @@ import io.circe.generic.auto._
 import io.circe.parser._
 
 case class Shift(
-    worker: String
-    // designation: String
-    // statTime: String,
-    // endTime: String
+    worker: String,
+    color: String,
+    startTime: String,
+    endTime: String
 ) {
     def toJson(): String = {
         Printer.noSpaces

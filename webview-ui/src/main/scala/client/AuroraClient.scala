@@ -12,6 +12,7 @@ import utilities.JsonImplicits._
 import scala.util.Random
 import org.scalajs.dom.HTMLTableCellElement
 import types.*
+import components.cells._
 
 case class AuroraClient() {
 
@@ -20,61 +21,364 @@ case class AuroraClient() {
         Week(
           "1",
           List(
-            Day(Sunday, "1", "February", "2024", List(Shift("Darien"))),
-            Day(Monday, "2", "February", "2024", List()),
-            Day(Tuesday, "3", "February", "2024", List()),
-            Day(Wednesday, "4", "February", "2024", List()),
-            Day(Thursday, "5", "February", "2024", List()),
-            Day(Friday, "6", "February", "2024", List()),
-            Day(Saturday, "7", "February", "2024", List())
+            Day(
+              Sunday,
+              "1",
+              "March",
+              "2024",
+              List(
+                Shift("Alice", "#D2832D", "12:00", "13:00"),
+                Shift("Bob", "#41C94C", "12:00", "13:00"),
+                Shift("Mia", "#3183D5", "12:00", "13:00")
+                // Shift("David", "#C940C9", "12:00", "13:00")
+              )
+            ),
+            Day(
+              Monday,
+              "2",
+              "March",
+              "2024",
+              List(
+                Shift("Alice", "#D2832D", "12:00", "13:00"),
+                Shift("Bob", "#41C94C", "12:00", "13:00")
+                // Shift("Mia", "#3183D5", "12:00", "13:00"),
+                // Shift("David", "#C940C9", "12:00", "13:00")
+              )
+            ),
+            Day(
+              Tuesday,
+              "3",
+              "March",
+              "2024",
+              List(
+                Shift("Alice", "#D2832D", "12:00", "13:00"),
+                Shift("Bob", "#41C94C", "12:00", "13:00"),
+                // Shift("Mia", "#3183D5", "12:00", "13:00"),
+                Shift("David", "#C940C9", "12:00", "13:00")
+              )
+            ),
+            Day(
+              Wednesday,
+              "4",
+              "March",
+              "2024",
+              List(
+                Shift("Alice", "#D2832D", "12:00", "13:00")
+                // Shift("Bob", "#41C94C", "12:00", "13:00"),
+                // Shift("Mia", "#3183D5", "12:00", "13:00"),
+                // Shift("David", "#C940C9", "12:00", "13:00")
+              )
+            ),
+            Day(
+              Thursday,
+              "5",
+              "March",
+              "2024",
+              List(
+                Shift("Alice", "#D2832D", "12:00", "13:00"),
+                Shift("Bob", "#41C94C", "12:00", "13:00"),
+                Shift("Mia", "#3183D5", "12:00", "13:00"),
+                Shift("David", "#C940C9", "12:00", "13:00")
+              )
+            ),
+            Day(
+              Friday,
+              "6",
+              "March",
+              "2024",
+              List(
+                // Shift("Alice", "#D2832D"),
+                // Shift("Bob", "#41C94C"),
+                Shift("Mia", "#3183D5", "12:00", "13:00"),
+                Shift("David", "#C940C9", "12:00", "13:00")
+              )
+            ),
+            Day(
+              Saturday,
+              "7",
+              "March",
+              "2024",
+              List(
+                // Shift("Alice", "#D2832D"),
+                Shift("Bob", "#41C94C", "12:00", "13:00"),
+                Shift("Mia", "#3183D5", "12:00", "13:00")
+                // Shift("David", "#C940C9")
+              )
+            )
           )
         ),
         Week(
           "2",
           List(
-            Day(Sunday, "8", "February", "2024", List()),
-            Day(Monday, "9", "February", "2024", List()),
-            Day(Tuesday, "10", "February", "2024", List()),
-            Day(Wednesday, "11", "February", "2024", List()),
+            Day(
+              Sunday,
+              "8",
+              "March",
+              "2024",
+              List(
+                // Shift("Alice", "#D2832D"),
+                Shift("Bob", "#41C94C", "12:00", "13:00"),
+                // Shift("Mia", "#3183D5"),
+                Shift("David", "#C940C9", "12:00", "13:00")
+              )
+            ),
+            Day(
+              Monday,
+              "9",
+              "March",
+              "2024",
+              List(
+                // Shift("Alice", "#D2832D"),
+                Shift("Bob", "#41C94C", "12:00", "13:00"),
+                // Shift("Mia", "#3183D5"),
+                Shift("David", "#C940C9", "12:00", "13:00")
+              )
+            ),
+            Day(
+              Tuesday,
+              "10",
+              "March",
+              "2024",
+              List(
+                Shift("Alice", "#D2832D", "12:00", "13:00"),
+                Shift("Bob", "#41C94C", "12:00", "13:00")
+                // Shift("Mia", "#3183D5"),
+                // Shift("David", "#C940C9")
+              )
+            ),
+            Day(
+              Wednesday,
+              "11",
+              "March",
+              "2024",
+              List(
+                Shift("Alice", "#D2832D", "12:00", "13:00"),
+                // Shift("Bob", "#41C94C"),
+                // Shift("Mia", "#3183D5"),
+                Shift("David", "#C940C9", "12:00", "13:00")
+              )
+            ),
             Day(
               Thursday,
               "12",
-              "February",
+              "March",
               "2024",
-              List(Shift("James"), Shift("Yash"))
+              List(
+                Shift("Alice", "#D2832D", "12:00", "13:00"),
+                // Shift("Bob", "#41C94C"),
+                Shift("Mia", "#3183D5", "12:00", "13:00")
+                // Shift("David", "#C940C9")
+              )
             ),
-            Day(Friday, "13", "February", "2024", List()),
-            Day(Saturday, "14", "February", "2024", List())
+            Day(
+              Friday,
+              "13",
+              "March",
+              "2024",
+              List(
+                Shift("Alice", "#D2832D", "12:00", "13:00"),
+                // Shift("Bob", "#41C94C"),
+                Shift("Mia", "#3183D5", "12:00", "13:00")
+                // Shift("David", "#C940C9")
+              )
+            ),
+            Day(
+              Saturday,
+              "14",
+              "March",
+              "2024",
+              List(
+                Shift("Alice", "#D2832D", "12:00", "13:00"),
+                // Shift("Bob", "#41C94C"),
+                Shift("Mia", "#3183D5", "12:00", "13:00")
+                // Shift("David", "#C940C9")
+              )
+            )
           )
         ),
         Week(
           "3",
           List(
-            Day(Sunday, "15", "February", "2024", List()),
-            Day(Monday, "16", "February", "2024", List()),
-            Day(Tuesday, "17", "February", "2024", List(Shift("Yash"))),
-            Day(Wednesday, "18", "February", "2024", List()),
-            Day(Thursday, "19", "February", "2024", List()),
-            Day(Friday, "20", "February", "2024", List()),
-            Day(Saturday, "21", "February", "2024", List())
+            Day(
+              Sunday,
+              "15",
+              "March",
+              "2024",
+              List(
+                // Shift("Alice", "#D2832D"),
+                // Shift("Bob", "#41C94C"),
+                Shift("Mia", "#3183D5", "12:00", "13:00"),
+                Shift("David", "#C940C9", "12:00", "13:00")
+              )
+            ),
+            Day(
+              Monday,
+              "16",
+              "March",
+              "2024",
+              List(
+                // Shift("Alice", "#D2832D"),
+                Shift("Bob", "#41C94C", "12:00", "13:00"),
+                Shift("Mia", "#3183D5", "12:00", "13:00"),
+                Shift("David", "#C940C9", "12:00", "13:00")
+              )
+            ),
+            Day(
+              Tuesday,
+              "17",
+              "March",
+              "2024",
+              List(
+                // Shift("Alice", "#D2832D"),
+                Shift("Bob", "#41C94C", "12:00", "13:00"),
+                Shift("Mia", "#3183D5", "12:00", "13:00")
+                // Shift("David", "#C940C9")
+              )
+            ),
+            Day(
+              Wednesday,
+              "18",
+              "March",
+              "2024",
+              List(
+                // Shift("Alice", "#D2832D"),
+                Shift("Bob", "#41C94C", "12:00", "13:00"),
+                Shift("Mia", "#3183D5", "12:00", "13:00")
+                // Shift("David", "#C940C9")
+              )
+            ),
+            Day(
+              Thursday,
+              "19",
+              "March",
+              "2024",
+              List(
+                Shift("Alice", "#D2832D", "12:00", "13:00"),
+                Shift("Bob", "#41C94C", "12:00", "13:00"),
+                // Shift("Mia", "#3183D5"),
+                Shift("David", "#C940C9", "12:00", "13:00")
+              )
+            ),
+            Day(
+              Friday,
+              "20",
+              "March",
+              "2024",
+              List(
+                Shift("Alice", "#D2832D", "12:00", "13:00"),
+                // Shift("Bob", "#41C94C"),
+                // Shift("Mia", "#3183D5"),
+                Shift("David", "#C940C9", "12:00", "13:00")
+              )
+            ),
+            Day(
+              Saturday,
+              "21",
+              "March",
+              "2024",
+              List(
+                Shift("Alice", "#D2832D", "12:00", "13:00"),
+                // Shift("Bob", "#41C94C"),
+                // Shift("Mia", "#3183D5"),
+                Shift("David", "#C940C9", "12:00", "13:00")
+              )
+            )
           )
         ),
         Week(
           "4",
           List(
-            Day(Sunday, "22", "February", "2024", List()),
-            Day(Monday, "23", "February", "2024", List()),
-            Day(Tuesday, "24", "February", "2024", List()),
-            Day(Wednesday, "25", "February", "2024", List(Shift("Laila"))),
-            Day(Thursday, "26", "February", "2024", List()),
-            Day(Friday, "27", "February", "2024", List()),
-            Day(Saturday, "28", "February", "2024", List())
+            Day(
+              Sunday,
+              "22",
+              "March",
+              "2024",
+              List(
+                Shift("Alice", "#D2832D", "12:00", "13:00")
+                // Shift("Bob", "#41C94C"),
+                // Shift("Mia", "#3183D5"),
+                // Shift("David", "#C940C9")
+              )
+            ),
+            Day(
+              Monday,
+              "23",
+              "March",
+              "2024",
+              List(
+                Shift("Alice", "#D2832D", "12:00", "13:00"),
+                Shift("Bob", "#41C94C", "12:00", "13:00"),
+                Shift("Mia", "#3183D5", "12:00", "13:00")
+                // Shift("David", "#C940C9")
+              )
+            ),
+            Day(
+              Tuesday,
+              "24",
+              "March",
+              "2024",
+              List(
+                // Shift("Alice", "#D2832D"),
+                Shift("Bob", "#41C94C", "12:00", "13:00"),
+                Shift("Mia", "#3183D5", "12:00", "13:00")
+                // Shift("David", "#C940C9")
+              )
+            ),
+            Day(
+              Wednesday,
+              "25",
+              "March",
+              "2024",
+              List(
+                // Shift("Alice", "#D2832D"),
+                Shift("Bob", "#41C94C", "12:00", "13:00"),
+                Shift("Mia", "#3183D5", "12:00", "13:00")
+                // Shift("David", "#C940C9")
+              )
+            ),
+            Day(
+              Thursday,
+              "26",
+              "March",
+              "2024",
+              List(
+                // Shift("Alice", "#D2832D"),
+                // Shift("Bob", "#41C94C"),
+                Shift("Mia", "#3183D5", "12:00", "13:00"),
+                Shift("David", "#C940C9", "12:00", "13:00")
+              )
+            ),
+            Day(
+              Friday,
+              "27",
+              "March",
+              "2024",
+              List(
+                // Shift("Alice", "#D2832D"),
+                // Shift("Bob", "#41C94C"),
+                Shift("Mia", "#3183D5", "12:00", "13:00"),
+                Shift("David", "#C940C9", "12:00", "13:00")
+              )
+            ),
+            Day(
+              Saturday,
+              "28",
+              "March",
+              "2024",
+              List(
+                // Shift("Alice", "#D2832D"),
+                // Shift("Bob", "#41C94C"),
+                Shift("Mia", "#3183D5", "12:00", "13:00"),
+                Shift("David", "#C940C9", "12:00", "13:00")
+              )
+            )
           )
         )
       )
     )
 
     val copiedContent = Var[Option[Shift]](None)
+    val modal = Modal()
 
     val GETUrl: String = "http://localhost:9000/patients"
 

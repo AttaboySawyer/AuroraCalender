@@ -17,6 +17,8 @@ import cats.instances.boolean
 import client.AuroraClient
 import types.Shift
 import types.Day
+import scala.scalajs.js.timers.{SetTimeoutHandle, setTimeout, clearTimeout}
+import org.scalajs.dom.HTMLDivElement
 
 case class CalenderDayDiv(
     day: Day,
@@ -35,90 +37,17 @@ case class CalenderDayDiv(
                   "➕",
                   onClick --> (e => {
                       println(fieldName)
+                      val modal = dom.document
+                          .getElementById("myModal")
+                          .asInstanceOf[HTMLDivElement];
+                      modal.style.display = "block"
+                      client.modal.updateMonthVar(day.month)
+                      client.modal.updateDayNameVar(fieldName.capitalize)
+                      client.modal.updateDayNumberVar(day.number)
                   })
                 )
             case false => div()
         }
-    }
-    def renderShifts(day: Day) = {
-        day.shifts.map(shift => {
-            td(
-              shift.worker,
-              draggable := true,
-              onMouseDown --> { (e) =>
-                  {
-                      e.ctrlKey match {
-                          case true => {
-                              dom.document
-                                  .getElementsByTagName("td")
-                                  .toList
-                                  .map(_.classList.remove("copied-cell"))
-                              e.target
-                                  .asInstanceOf[HTMLTableCellElement]
-                                  .classList
-                                  .add("copied-cell")
-                              client.copiedContent.update(content =>
-                                  Some(
-                                    Shift(
-                                      e.target
-                                          .asInstanceOf[HTMLTableCellElement]
-                                          .innerText
-                                    )
-                                  )
-                              )
-                              println(
-                                "copying " + e.target
-                                    .asInstanceOf[HTMLTableCellElement]
-                                    .innerText + " from day " + day.number
-                              )
-                              // println(client.copiedContent.now())
-                          }
-                          case false =>
-                              e.altKey match {
-                                  case true =>
-                                      dom.document
-                                          .getElementsByTagName("td")
-                                          .toList
-                                          .map(
-                                            _.classList.remove("copied-cell")
-                                          )
-                                      e.target
-                                          .asInstanceOf[HTMLTableCellElement]
-                                          .classList
-                                          .add("copied-cell")
-                                      client.copiedContent.update(content =>
-                                          Some(
-                                            Shift(
-                                              e.target
-                                                  .asInstanceOf[
-                                                    HTMLTableCellElement
-                                                  ]
-                                                  .innerText
-                                            )
-                                          )
-                                      )
-                                      println(
-                                        "continuous copying " + e.target
-                                            .asInstanceOf[HTMLTableCellElement]
-                                            .innerText + " from day " + day.number
-                                      )
-                                  case false =>
-                              }
-                      }
-
-                  }
-              },
-              onMouseUp --> { (e) =>
-                  {
-                      println(
-                        "pasting " + e.target
-                            .asInstanceOf[HTMLTableCellElement]
-                            .innerText + " to day " + day.number
-                      )
-                  }
-              }
-            )
-        })
     }
 
     def render() = {
@@ -131,122 +60,111 @@ case class CalenderDayDiv(
             minHeight := "150px",
             tabIndex := 0,
             onClick --> (e => e.target.asInstanceOf[HTMLElement].focus()),
-            onDblClick --> (e => println("Cannot edit this field.")),
-            onMouseEnter --> (e => showAddButton.update(bool => true)),
+            onMouseEnter --> handleDayMouseEnter,
             onMouseLeave --> (e => showAddButton.update(bool => false)),
-            onMouseEnter --> { (e) =>
-                {
-                    e.altKey match {
-                        case true => {
-                            client.copiedContent.signal
-                                .now() match {
-                                case Some(value) => {
-                                    println(
-                                      "pasting " + value + " to day " + day.number
-                                    )
-
-                                    client.dataModelVar.update(weeks => {
-                                        weeks
-                                            .map(week =>
-                                                week.copy(
-                                                  days =
-                                                      week.days.map(weekday => {
-                                                          if (
-                                                            weekday.number == day.number
-                                                          ) {
-                                                              val updatedShifts = if (
-                                                                !weekday.shifts
-                                                                    .contains(
-                                                                      value
-                                                                    )
-                                                              ) {
-                                                                  value :: weekday.shifts
-                                                              } else {
-                                                                  weekday.shifts
-                                                              }
-                                                              weekday
-                                                                  .copy(shifts =
-                                                                      updatedShifts
-                                                                  )
-                                                          } else {
-                                                              weekday
-                                                          }
-                                                      })
-                                                )
-                                            )
-                                    })
-                                }
-                                case None => println("no shift to paste")
-                            }
-                        }
-                        case false =>
-
-                    }
-
-                }
-            },
-            onMouseUp --> { (e) =>
-                {
-                    client.copiedContent.signal
-                        .now() match {
-                        case Some(value) => {
-                            println(
-                              "pasting " + value + " to day " + day.number
-                            )
-
-                            client.dataModelVar.update(weeks => {
-                                weeks
-                                    .map(week =>
-                                        week.copy(
-                                          days = week.days.map(weekday => {
-                                              if (
-                                                weekday.number == day.number
-                                              ) {
-                                                  val updatedShifts =
-                                                      if (
-                                                        !weekday.shifts
-                                                            .contains(value)
-                                                      ) {
-                                                          value :: weekday.shifts
-                                                      } else {
-                                                          weekday.shifts
-                                                      }
-                                                  weekday.copy(shifts =
-                                                      updatedShifts
-                                                  )
-                                              } else {
-                                                  weekday
-                                              }
-                                          })
-                                        )
-                                    )
-                            })
-
-                            client.copiedContent.update(shift => None)
-                            dom.document
-                                .getElementsByTagName("td")
-                                .toList
-                                .map(_.classList.remove("copied-cell"))
-                        }
-                        case None => println("no shift to paste")
-                    }
-
-                }
-            },
+            onMouseUp --> handleDayMouseUp,
             td(
               display := "flex",
               top := "0",
+              backgroundColor := "rgb(43, 43, 43)",
               justifyContent := "space-between",
               day.number,
               child <-- renderAddButton(showAddButton.signal)
             ),
             children <-- client.dataModelVar.signal.map(data => {
-                renderShifts(
-                  data.flatMap(week => week.getDayByNumber(day.number)).head
-                )
+                ShiftsDiv(
+                  data.flatMap(week => week.getDayByNumber(day.number)).head,
+                  client
+                ).render()
             })
           )
         )
     }
 
+    def handleDayMouseEnter(e: MouseEvent) = {
+        showAddButton.update(bool => true)
+        e.altKey match {
+            case true => {
+                client.copiedContent.signal
+                    .now() match {
+                    case Some(value) => {
+                        println(
+                          "pasting " + value + " to day " + day.number
+                        )
+
+                        client.dataModelVar.update(weeks => {
+                            weeks
+                                .map(week =>
+                                    week.copy(
+                                      days = week.days.map(weekday => {
+                                          if (weekday.number == day.number) {
+                                              val updatedShifts =
+                                                  if (
+                                                    !weekday.shifts
+                                                        .contains(
+                                                          value
+                                                        )
+                                                  ) {
+                                                      value :: weekday.shifts
+                                                  } else {
+                                                      weekday.shifts
+                                                  }
+                                              weekday
+                                                  .copy(shifts = updatedShifts)
+                                          } else {
+                                              weekday
+                                          }
+                                      })
+                                    )
+                                )
+                        })
+                    }
+                    case None => println("no shift to paste")
+                }
+            }
+            case false =>
+        }
+    }
+
+    def handleDayMouseUp(e: MouseEvent) = {
+        client.copiedContent.signal
+            .now() match {
+            case Some(value) => {
+                println(
+                  "pasting " + value + " to day " + day.number
+                )
+                client.dataModelVar.update(weeks => {
+                    weeks
+                        .map(week =>
+                            week.copy(
+                              days = week.days.map(weekday => {
+                                  if (weekday.number == day.number) {
+                                      val updatedShifts =
+                                          if (
+                                            !weekday.shifts
+                                                .contains(value)
+                                          ) {
+                                              value :: weekday.shifts
+                                          } else {
+                                              weekday.shifts
+                                          }
+                                      weekday.copy(shifts = updatedShifts)
+                                  } else {
+                                      weekday
+                                  }
+                              })
+                            )
+                        )
+                })
+
+                client.copiedContent.update(shift => None)
+                dom.document
+                    .getElementsByTagName("td")
+                    .toList
+                    .map(_.classList.remove("copied-cell"))
+                    .head
+            }
+            case None => println("no shift to paste")
+        }
+    }
 }

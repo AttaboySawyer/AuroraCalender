@@ -25,9 +25,9 @@ case class TableBody[T](config: TableConfig[T]) extends AuroraElement {
 
         tbody(
           // Fetch the data on component mount, update table
-          FetchStream.get(config.client.GETUrl) --> { responseText =>
-              config.client.populateTable(responseText)
-          },
+          //   FetchStream.get(config.client.GETUrl) --> { responseText =>
+          //       config.client.populateTable(responseText)
+          //   },
           idAttr := "myTableBody",
           children <-- config.client.dataModelVar.signal.map(data =>
               data.map { item =>

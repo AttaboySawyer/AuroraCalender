@@ -20,7 +20,7 @@ case class Toolbar[A](config: TableConfig[A]) extends AuroraElement {
     def render(): Element = {
         div(
           className := "toolbar",
-          h2("February")
+          h2("March")
           //   Text("Search By:", ml = "").render(),
           //   Search("All" :: searchByOption).render(),
           //   Text("Show:").render(),

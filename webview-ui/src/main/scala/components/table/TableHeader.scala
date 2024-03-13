@@ -44,8 +44,8 @@ case class TableHeader(headers: List[ColumnConfig[_]]) extends AuroraElement {
             headers.map(columnConfig => {
                 th(
                   columnConfig.headerTitle,
-                  width := columnConfig.width,
-                  onClick --> onHeaderClick
+                  width := columnConfig.width
+                  //   onClick --> onHeaderClick
                 )
             })
           )
